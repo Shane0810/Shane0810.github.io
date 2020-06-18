@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>Redis学习系列（一） | Shane</title>
+  <meta name="description" content="Redis学习系列(一)NoSQL概述为什么需要使用NoSQL： 用户的个人信息，社交网络，地理位置等用户自己产生的数据，用户日志等等爆法式增长。这个时候需要使用NoSQL。 因此又有一个问题： 1、到底什么是NoSQL？关系型数据库：表格，行和列。 很多的数据类型用户的个人信息，社交网络，地理位置这些数据的存储不需要一个固定的格式。而NoSQL类型的数据库以其自身的特点能够满足这样的使用要求。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis学习系列（一）">
+<meta property="og:url" content="http://yoursite.com/2020/06/18/Redis%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%EF%BC%88%E4%B8%80%EF%BC%89/index.html">
+<meta property="og:site_name" content="Shane">
+<meta property="og:description" content="Redis学习系列(一)NoSQL概述为什么需要使用NoSQL： 用户的个人信息，社交网络，地理位置等用户自己产生的数据，用户日志等等爆法式增长。这个时候需要使用NoSQL。 因此又有一个问题： 1、到底什么是NoSQL？关系型数据库：表格，行和列。 很多的数据类型用户的个人信息，社交网络，地理位置这些数据的存储不需要一个固定的格式。而NoSQL类型的数据库以其自身的特点能够满足这样的使用要求。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-06-18T13:29:07.000Z">
+<meta property="article:modified_time" content="2020-06-18T13:30:21.290Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="Redis">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://yoursite.com/2020/06/18/Redis%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%EF%BC%88%E4%B8%80%EF%BC%89/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="Shane" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/shane0810" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Shane</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Java Developer &amp; Designer</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Hangzhou, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-books">
+          <a href="/books">
+            
+            <i class="icon icon-book-fill"></i>
+            
+            <span class="menu-title">书单</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/shane0810" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="http://weibo.com/shane0810" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>目前只想好好做笔记！</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringMVC/" rel="tag">SpringMVC</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%BD%AF%E4%BB%B6%E5%AE%89%E8%A3%85/" rel="tag">软件安装</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/Redis/" style="font-size: 13px;">Redis</a> <a href="/tags/Spring/" style="font-size: 13px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 13px;">SpringBoot</a> <a href="/tags/SpringMVC/" style="font-size: 13px;">SpringMVC</a> <a href="/tags/%E8%BD%AF%E4%BB%B6%E5%AE%89%E8%A3%85/" style="font-size: 14px;">软件安装</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">六月 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2020/06/18/Redis%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%EF%BC%88%E4%B8%80%EF%BC%89/" class="title">Redis学习系列（一）</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-06-18T13:29:07.000Z" itemprop="datePublished">2020-06-18</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2020/06/18/Linux%E5%AE%89%E8%A3%85Redis/" class="title">Linux安装Redis</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-06-18T04:34:57.000Z" itemprop="datePublished">2020-06-18</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2020/06/18/Linux%E5%AE%89%E8%A3%85JDK1-8/" class="title">Linux安装JDK1.8</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-06-18T03:13:19.000Z" itemprop="datePublished">2020-06-18</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2020/05/12/SpringBoot-diy%E5%90%AF%E5%8A%A8%E7%B1%BB/" class="title">SpringBoot:diy启动类</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-05-12T05:29:27.000Z" itemprop="datePublished">2020-05-12</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2020/05/10/SSM%E6%95%B4%E5%90%88%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="title">SSM整合学习笔记</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-05-10T13:13:13.000Z" itemprop="datePublished">2020-05-10</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-Redis学习系列（一）" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Redis学习系列（一）
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/06/18/Redis%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%EF%BC%88%E4%B8%80%EF%BC%89/" class="article-date">
+	  <time datetime="2020-06-18T13:29:07.000Z" itemprop="datePublished">2020-06-18</time>
+	</a>
+</span>
+        
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link" href="/tags/Redis/" rel="tag">Redis</a>
+  </span>
+
+
+        
+	<span class="article-read hidden-xs">
+	    <i class="icon icon-eye-fill" aria-hidden="true"></i>
+	    <span id="busuanzi_container_page_pv">
+			<span id="busuanzi_value_page_pv">0</span>
+		</span>
+	</span>
+
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/06/18/Redis%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%EF%BC%88%E4%B8%80%EF%BC%89/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 3.9k(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 18(分)</span>
+	
+
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h1 id="Redis学习系列-一"><a href="#Redis学习系列-一" class="headerlink" title="Redis学习系列(一)"></a>Redis学习系列(一)</h1><h2 id="NoSQL概述"><a href="#NoSQL概述" class="headerlink" title="NoSQL概述"></a>NoSQL概述</h2><p>为什么需要使用NoSQL：</p>
+<p>用户的个人信息，社交网络，地理位置等用户自己产生的数据，用户日志等等爆法式增长。这个时候需要使用NoSQL。</p>
+<p>因此又有一个问题：</p>
+<h3 id="1、到底什么是NoSQL？"><a href="#1、到底什么是NoSQL？" class="headerlink" title="1、到底什么是NoSQL？"></a><strong>1、到底什么是NoSQL？</strong></h3><p>关系型数据库：表格，行和列。</p>
+<p>很多的数据类型用户的个人信息，社交网络，地理位置这些数据的存储不需要一个固定的格式。而NoSQL类型的数据库以其自身的特点能够满足这样的使用要求。</p>
+<blockquote>
+<p>——百度百科</p>
+<p>对于NoSQL并没有一个明确的范围和定义，但是他们都普遍存在下面一些共同特征：</p>
+<h3 id="易扩展"><a href="#易扩展" class="headerlink" title="易扩展"></a>易扩展</h3><p>NoSQL数据库种类繁多，但是一个共同的特点都是去掉关系数据库的关系型特性。数据之间无关系，这样就非常容易扩展。无形之间，在架构的层面上带来了可扩展的能力。 </p>
+<h3 id="大数据量，高性能"><a href="#大数据量，高性能" class="headerlink" title="大数据量，高性能"></a>大数据量，高性能</h3><p>NoSQL数据库都具有非常高的读写性能，尤其在大数据量下，同样表现优秀。这得益于它的无关系性，数据库的结构简单。一般MySQL使用Query Cache。NoSQL的Cache是记录级的，是一种细粒度的Cache，所以NoSQL在这个层面上来说性能就要高很多。 </p>
+<h3 id="灵活的数据模型"><a href="#灵活的数据模型" class="headerlink" title="灵活的数据模型"></a>灵活的数据模型</h3><p>NoSQL无须事先为要存储的数据建立字段，随时可以存储自定义的数据格式。而在关系数据库里，增删字段是一件非常麻烦的事情。如果是非常大数据量的表，增加字段简直就是——个噩梦。这点在大数据量的Web 2.0时代尤其明显。 </p>
+<h3 id="高可用"><a href="#高可用" class="headerlink" title="高可用"></a>高可用</h3><p>NoSQL在不太影响性能的情况，就可以方便地实现高可用的架构。比如Cassandra、HBase模型，通过复制模型也能实现高可用。 </p>
+</blockquote>
+<h3 id="2、传统的关系型数据库和NoSQl的区别"><a href="#2、传统的关系型数据库和NoSQl的区别" class="headerlink" title="2、传统的关系型数据库和NoSQl的区别"></a><strong>2、传统的关系型数据库和NoSQl的区别</strong></h3><p>关系型数据库</p>
+<ul>
+<li>结构化组织</li>
+<li>SQL </li>
+<li>数据和关系都存在单独的表中</li>
+<li>数据操作语言，数据定义语言</li>
+<li>严格的一致性</li>
+<li>基础的事务</li>
+<li>。。。</li>
+</ul>
+<p>NoSQL</p>
+<ul>
+<li>不仅仅是数据</li>
+<li>没有固定的查询语言</li>
+<li>键值对存储，列存储，文档存储，图形数据库</li>
+<li>最终一致性</li>
+<li>CAP定理和BASE（异地多活）</li>
+<li>高性能,高可用,高可扩展性(扩容)</li>
+</ul>
+<h4 id="3、四大分类"><a href="#3、四大分类" class="headerlink" title="3、四大分类"></a>3、四大分类</h4><p><strong>KV键值对:</strong></p>
+<ul>
+<li><p>新浪:redis</p>
+</li>
+<li><p>美团:redis+Tair</p>
+</li>
+<li><p>阿里百度:Redis+memecache</p>
+<p><strong>文档型数据库</strong>:</p>
+</li>
+<li><p>MongoDB(是一个基于分布式文件存储的数据库,C++编写,主要处理大量的文档,是NoSQL中功能最丰富,最像关系型数据库</p>
+</li>
+</ul>
+<p><strong>列存储数据库</strong></p>
+<ul>
+<li>HBase</li>
+<li>分布式文件系统</li>
+</ul>
+<p><strong>图关系数据库</strong></p>
+<ul>
+<li>主要是存储关系的,比如社交网络,图论?</li>
+</ul>
+<h2 id="Redis入门"><a href="#Redis入门" class="headerlink" title="Redis入门"></a>Redis入门</h2><h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><blockquote>
+<p>——百度百科</p>
+<p>Redis（Remote Dictionary Server )，即远程字典服务，是一个开源的使用ANSI <a href="https://baike.baidu.com/item/C语言" target="_blank" rel="noopener">C语言</a>编写、支持网络、可基于内存亦可持久化的日志型、Key-Value<a href="https://baike.baidu.com/item/数据库/103728" target="_blank" rel="noopener">数据库</a>，并提供多种语言的API。</p>
+</blockquote>
+<blockquote>
+<p>——Redis官方</p>
+</blockquote>
+<h3 id="作用"><a href="#作用" class="headerlink" title="作用"></a>作用</h3><ul>
+<li>内存存储、持久化、内存中是断电即失、所以注意持久化</li>
+<li>效率高，可以用于高速存储</li>
+<li>发布订阅系统</li>
+<li>地图信息分析</li>
+<li>计时器、技术器（浏览量）</li>
+<li>。。。</li>
+</ul>
+<h3 id="特性"><a href="#特性" class="headerlink" title="特性"></a>特性</h3><ul>
+<li>多样的数据类型</li>
+<li>持久化</li>
+<li>集群</li>
+<li>事务</li>
+<li>……</li>
+</ul>
+<p>默认有16个数据库，使用第0个。</p>
+<ul>
+<li>Redis是单线程的。是基于内存操作的，CPU不是Redis的性能瓶颈，Redis的瓶颈是根据机器的内存和网络带宽。但是6.0以后是多线程的</li>
+</ul>
+<p>经典问题之 <strong>单线程为何这么快</strong>？</p>
+<p>redis是将所有的数据都睡存放在内存中，所以使用单线程去操作是效率最高的。（待求证）</p>
+<h3 id="Redis-key"><a href="#Redis-key" class="headerlink" title="Redis-key"></a>Redis-key</h3> <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; <span class="built_in">set</span> shane 123 //添加key</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; get shane</span><br><span class="line"><span class="string">"123"</span></span><br><span class="line">127.0.0.1:6379&gt; expire shane 10 //设置过期时间</span><br><span class="line">(<span class="built_in">integer</span>) 1</span><br><span class="line">127.0.0.1:6379&gt; ttl shane //查看当前key的剩余时间</span><br><span class="line">(<span class="built_in">integer</span>) 6</span><br><span class="line">127.0.0.1:6379&gt; ttl shane</span><br><span class="line">(<span class="built_in">integer</span>) 2</span><br><span class="line">127.0.0.1:6379&gt; ttl shane</span><br><span class="line">(<span class="built_in">integer</span>) 1</span><br><span class="line">127.0.0.1:6379&gt; ttl shane</span><br><span class="line">(<span class="built_in">integer</span>) 0</span><br><span class="line">127.0.0.1:6379&gt; ttl shane</span><br><span class="line">(<span class="built_in">integer</span>) -2</span><br><span class="line">127.0.0.1:6379&gt; get shane</span><br><span class="line">(nil)</span><br><span class="line">127.0.0.1:6379&gt; <span class="built_in">set</span> shane 123</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; get shane</span><br><span class="line"><span class="string">"123"</span></span><br><span class="line">127.0.0.1:6379&gt; exists shane//判断是否存在这个key</span><br><span class="line">(<span class="built_in">integer</span>) 1</span><br><span class="line">127.0.0.1:6379&gt; move shane 1//移动key到指定编号的数据库</span><br><span class="line">(<span class="built_in">integer</span>) 1</span><br><span class="line">127.0.0.1:6379&gt; keys *</span><br><span class="line">(empty array)</span><br><span class="line">127.0.0.1:6379[1]&gt; keys *</span><br><span class="line">1) <span class="string">"shane"</span></span><br><span class="line">127.0.0.1:6379[1]&gt; <span class="built_in">type</span> shane //查看数据类型</span><br><span class="line">string</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="五大数据类型"><a href="#五大数据类型" class="headerlink" title="五大数据类型"></a>五大数据类型</h3><p><strong>1、String</strong> </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; get shane<span class="comment">#获取key</span></span><br><span class="line"><span class="string">"123"</span></span><br><span class="line">127.0.0.1:6379&gt; append shane is <span class="comment">#在shane对应的值下添加“is"返回的是添加成功之后的value长度</span></span><br><span class="line">(<span class="built_in">integer</span>) 5</span><br><span class="line">127.0.0.1:6379&gt; get shane</span><br><span class="line"><span class="string">"123is"</span></span><br><span class="line">127.0.0.1:6379&gt; append shane1 1 <span class="comment">#如果key不存在，就会创建新的key</span></span><br><span class="line">(<span class="built_in">integer</span>) 1 </span><br><span class="line">127.0.0.1:6379&gt; append shane 1234</span><br><span class="line">(<span class="built_in">integer</span>) 10</span><br><span class="line">127.0.0.1:6379&gt; strlen shane <span class="comment">#string类型的数据的 长度。</span></span><br><span class="line">(<span class="built_in">integer</span>) 10</span><br><span class="line"></span><br><span class="line"><span class="comment">#######################</span></span><br><span class="line"><span class="comment">#i++操作</span></span><br><span class="line">127.0.0.1:6379&gt; get views</span><br><span class="line"><span class="string">"0"</span></span><br><span class="line">127.0.0.1:6379&gt; incr views </span><br><span class="line">(<span class="built_in">integer</span>) 1</span><br><span class="line">127.0.0.1:6379&gt; incr views </span><br><span class="line">(<span class="built_in">integer</span>) 2</span><br><span class="line">127.0.0.1:6379&gt; decr views </span><br><span class="line">(<span class="built_in">integer</span>) 1</span><br><span class="line">127.0.0.1:6379&gt; get views </span><br><span class="line"><span class="string">"1"</span></span><br><span class="line">127.0.0.1:6379&gt; incrby views 10<span class="comment"># 设置步长</span></span><br><span class="line">(<span class="built_in">integer</span>) 11</span><br><span class="line"></span><br><span class="line"><span class="comment">#######################</span></span><br><span class="line"><span class="comment">#字符串范围</span></span><br><span class="line">127.0.0.1:6379&gt; <span class="built_in">set</span> shane <span class="string">"hello ,welcome to ZJU "</span></span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; get shane</span><br><span class="line"><span class="string">"hello ,welcome to ZJU "</span></span><br><span class="line">127.0.0.1:6379&gt; getrange shane 0 3 <span class="comment">#截取字符串</span></span><br><span class="line"><span class="string">"hell"</span></span><br><span class="line">127.0.0.1:6379&gt; getrange shane 0 -1<span class="comment">#获取全部字符串，等于get shane</span></span><br><span class="line"><span class="string">"hello ,welcome to ZJU "</span></span><br><span class="line">127.0.0.1:6379&gt; </span><br><span class="line"></span><br><span class="line"><span class="comment">#替换</span></span><br><span class="line">127.0.0.1:6379&gt; setrange shane 5 niaho <span class="comment">#替换指定位置开是的字符串</span></span><br><span class="line">(<span class="built_in">integer</span>) 22</span><br><span class="line">127.0.0.1:6379&gt; get shane</span><br><span class="line"><span class="string">"helloniahocome to ZJU "</span></span><br><span class="line"></span><br><span class="line"><span class="comment">########################</span></span><br><span class="line"><span class="comment">#setex(set with expire) #设置过期时间</span></span><br><span class="line"><span class="comment">#setnx(set if not exist) #不存在设置，在分布式锁中会经常使用</span></span><br><span class="line">127.0.0.1:6379&gt; setex keys  30 shane <span class="comment">#设置keys的值为shane，过期时间为30s</span></span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; get keys</span><br><span class="line"><span class="string">"shane"</span></span><br><span class="line">127.0.0.1:6379&gt; ttl keys</span><br><span class="line">(<span class="built_in">integer</span>) 20</span><br><span class="line">127.0.0.1:6379&gt; ttl keys</span><br><span class="line">(<span class="built_in">integer</span>) 17</span><br><span class="line">127.0.0.1:6379&gt; ttl keys</span><br><span class="line">(<span class="built_in">integer</span>) 13</span><br><span class="line">127.0.0.1:6379&gt; ttl keys</span><br><span class="line">(<span class="built_in">integer</span>) -2</span><br><span class="line">127.0.0.1:6379&gt; get kyes</span><br><span class="line">(nil)</span><br><span class="line">127.0.0.1:6379&gt; keys *</span><br><span class="line">1) <span class="string">"shane"</span></span><br><span class="line">127.0.0.1:6379&gt; setnx key3 <span class="string">"shane"</span> <span class="comment">#如果创建的key3不存在，创建成功</span></span><br><span class="line">(<span class="built_in">integer</span>) 1</span><br><span class="line">127.0.0.1:6379&gt; keys *</span><br><span class="line">1) <span class="string">"key3"</span></span><br><span class="line">2) <span class="string">"shane"</span></span><br><span class="line">127.0.0.1:6379&gt; setnx key3 <span class="string">"shane"</span><span class="comment">#如果创建的key3存在，创建失败</span></span><br><span class="line">(<span class="built_in">integer</span>) 0</span><br><span class="line"><span class="comment">##################</span></span><br><span class="line">mset</span><br><span class="line">mget</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"> 127.0.0.1:6379&gt; mset k1 v1 k2 v2 k3 v3<span class="comment">#同时设置多个值</span></span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; keys *</span><br><span class="line">1) <span class="string">"k2"</span></span><br><span class="line">2) <span class="string">"k1"</span></span><br><span class="line">3) <span class="string">"k3"</span></span><br><span class="line">127.0.0.1:6379&gt; mget k1 k2 k3<span class="comment"># 同时获取多个值</span></span><br><span class="line">1) <span class="string">"v1"</span></span><br><span class="line">2) <span class="string">"v2"</span></span><br><span class="line">3) <span class="string">"v3"</span></span><br><span class="line"><span class="comment">#msetnx是一个原子性操作，要么都成功，要么都失败</span></span><br><span class="line">127.0.0.1:6379&gt; msetnx k1 v1 k4 v4</span><br><span class="line">(<span class="built_in">integer</span>) 0</span><br><span class="line">127.0.0.1:6379&gt; get k4</span><br><span class="line">(nil)</span><br><span class="line"></span><br><span class="line"><span class="comment">#对象</span></span><br><span class="line"><span class="built_in">set</span> user:1 &#123;name:zhangsan,age:3&#125; <span class="comment">#设置一个user:1对象，值位json字符来保存一个对象！</span></span><br><span class="line"></span><br><span class="line">127.0.0.1:6379&gt; mset user:1:name zhangsan user:1:age 2</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; mget user:1:name user:1:age</span><br><span class="line">1) <span class="string">"zhangsan"</span></span><br><span class="line">2) <span class="string">"2"</span></span><br><span class="line"><span class="comment">#redis中可以将key以这种方式来命名：user:&#123;id&#125;:&#123;filed&#125;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">##############</span></span><br><span class="line">getset <span class="comment">#先get后set的组合</span></span><br><span class="line">127.0.0.1:6379&gt; getset key2 <span class="string">"zhangsan "</span><span class="comment">#如果不存在key2，会创建一个key2，返回null</span></span><br><span class="line">(nil)</span><br><span class="line">127.0.0.1:6379&gt; get key2</span><br><span class="line"><span class="string">"zhangsan "</span></span><br><span class="line">127.0.0.1:6379&gt; getset key2 <span class="string">"shane"</span><span class="comment">#如果存在，会返回修改之前的数据，就是先get后set修改。</span></span><br><span class="line"><span class="string">"zhangsan "</span></span><br><span class="line">127.0.0.1:6379&gt; get key2</span><br><span class="line"><span class="string">"shane"</span></span><br></pre></td></tr></table></figure>
+
+<p>String类型常用的使用场景：value可以是字符串还可以是数字。</p>
+<p>可以用来作为</p>
+<ul>
+<li>计数器</li>
+<li>统计多单位的数量 </li>
+<li>对象缓存</li>
+</ul>
+<p><strong>2、List</strong><br>基本的数据类型，列表</p>
+<p>可以使用list实现栈，阻塞队列，队列</p>
+<p>所有的命令都是l开头</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">###################</span></span><br><span class="line"><span class="comment"># 将一个或者多个数据插入列表的头部</span></span><br><span class="line">127.0.0.1:6379&gt; lpush list three</span><br><span class="line">(<span class="built_in">integer</span>) 1</span><br><span class="line">127.0.0.1:6379&gt; lpush list one </span><br><span class="line">(<span class="built_in">integer</span>) 2</span><br><span class="line">127.0.0.1:6379&gt; lpush list two</span><br><span class="line">(<span class="built_in">integer</span>) 3</span><br><span class="line"><span class="comment">#获取所有的数据</span></span><br><span class="line">127.0.0.1:6379&gt; lrange list 0 -1</span><br><span class="line">1) <span class="string">"two"</span></span><br><span class="line">2) <span class="string">"one"</span></span><br><span class="line">3) <span class="string">"three"</span></span><br><span class="line"><span class="comment">#获取一个范围的数据，包含两个界</span></span><br><span class="line">127.0.0.1:6379&gt; lrange list 0 1</span><br><span class="line">1) <span class="string">"two"</span></span><br><span class="line">2) <span class="string">"one"</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">##########################</span></span><br><span class="line"><span class="comment">#将一个值或者多个值放到头部。</span></span><br><span class="line">127.0.0.1:6379&gt; lpush shane one</span><br><span class="line">(<span class="built_in">integer</span>) 1</span><br><span class="line">127.0.0.1:6379&gt; lpush shane two</span><br><span class="line">(<span class="built_in">integer</span>) 2</span><br><span class="line">127.0.0.1:6379&gt; lpush shane three</span><br><span class="line">(<span class="built_in">integer</span>) 3</span><br><span class="line"><span class="comment">#将一个值或者多个值插入到尾部</span></span><br><span class="line">127.0.0.1:6379&gt; rpush shane right</span><br><span class="line">(<span class="built_in">integer</span>) 4</span><br><span class="line">127.0.0.1:6379&gt; lrange shane 0 -1</span><br><span class="line">1) <span class="string">"three"</span></span><br><span class="line">2) <span class="string">"two"</span></span><br><span class="line">3) <span class="string">"one"</span></span><br><span class="line">4) <span class="string">"right"</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#################移除元素#############</span></span><br><span class="line">127.0.0.1:6379&gt; lpop shane<span class="comment">#移除list的第一个元素</span></span><br><span class="line"><span class="string">"three"</span></span><br><span class="line">127.0.0.1:6379&gt; lrange shane 0 -1</span><br><span class="line">1) <span class="string">"two"</span></span><br><span class="line">2) <span class="string">"one"</span></span><br><span class="line">3) <span class="string">"right"</span></span><br><span class="line">127.0.0.1:6379&gt; rpop shane <span class="comment">#移除list的最后一个元素</span></span><br><span class="line"><span class="string">"right"</span></span><br><span class="line">127.0.0.1:6379&gt; lrange shane 0 -1</span><br><span class="line">1) <span class="string">"two"</span></span><br><span class="line">2) <span class="string">"one"</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#####################</span></span><br><span class="line">127.0.0.1:6379&gt; lindex shane 0<span class="comment">#通过下标获取某一个值</span></span><br><span class="line"><span class="string">"two"</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">##########################</span></span><br><span class="line"><span class="comment">#llen</span></span><br><span class="line">127.0.0.1:6379&gt; llen shane <span class="comment">#返回列表的长度</span></span><br><span class="line">(<span class="built_in">integer</span>) 2</span><br><span class="line"></span><br><span class="line"><span class="comment">############</span></span><br><span class="line"><span class="comment">#lrem移除指定的值</span></span><br><span class="line">127.0.0.1:6379&gt; lpush shane three</span><br><span class="line">(<span class="built_in">integer</span>) 3</span><br><span class="line">127.0.0.1:6379&gt; lpush shane three</span><br><span class="line">(<span class="built_in">integer</span>) 4</span><br><span class="line">127.0.0.1:6379&gt; lrange shane 0 -1</span><br><span class="line">1) <span class="string">"three"</span></span><br><span class="line">2) <span class="string">"three"</span></span><br><span class="line">3) <span class="string">"two"</span></span><br><span class="line">4) <span class="string">"one"</span></span><br><span class="line">127.0.0.1:6379&gt; lrem shane 1 three</span><br><span class="line">(<span class="built_in">integer</span>) 1</span><br><span class="line">127.0.0.1:6379&gt; lrange shane 0 -1</span><br><span class="line">1) <span class="string">"three"</span></span><br><span class="line">2) <span class="string">"two"</span></span><br><span class="line">3) <span class="string">"one"</span></span><br><span class="line">127.0.0.1:6379&gt; lpush shane three</span><br><span class="line">(<span class="built_in">integer</span>) 4</span><br><span class="line">127.0.0.1:6379&gt; lrem shane 2 three</span><br><span class="line">(<span class="built_in">integer</span>) 2</span><br><span class="line">127.0.0.1:6379&gt; lrange shane 0 -1</span><br><span class="line">1) <span class="string">"two"</span></span><br><span class="line">2) <span class="string">"one"</span></span><br><span class="line"><span class="comment">#############</span></span><br><span class="line"><span class="comment"># trim 修剪，在redis的list中的截断。</span></span><br><span class="line"> 127.0.0.1:6379&gt; rpush mylist <span class="string">"hello1"</span></span><br><span class="line">(<span class="built_in">integer</span>) 1</span><br><span class="line">127.0.0.1:6379&gt; rpush mylist <span class="string">"hello2"</span></span><br><span class="line">(<span class="built_in">integer</span>) 2</span><br><span class="line">127.0.0.1:6379&gt; rpush mylist <span class="string">"hello3"</span></span><br><span class="line">(<span class="built_in">integer</span>) 3</span><br><span class="line">127.0.0.1:6379&gt; rpush mylist <span class="string">"hello4"</span></span><br><span class="line">(<span class="built_in">integer</span>) 4</span><br><span class="line">127.0.0.1:6379&gt; ltrim mylist 1 2<span class="comment">#通过指定下标截取的长度，这个list已经改变。截断后只剩下最后一个元素</span></span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; lrange mylist 0 -1</span><br><span class="line">1) <span class="string">"hello2"</span></span><br><span class="line">2) <span class="string">"hello3"</span></span><br><span class="line"><span class="comment">################</span></span><br><span class="line"><span class="comment">#rpoplpush </span></span><br><span class="line">127.0.0.1:6379&gt; lrange mylist 0 -1</span><br><span class="line">1) <span class="string">"hello2"</span></span><br><span class="line">2) <span class="string">"hello3"</span></span><br><span class="line">127.0.0.1:6379&gt; rpoplpush mylist shane<span class="comment">#将mylist中操作一个rpop，然后将取得的元素lpush进shane</span></span><br><span class="line"><span class="string">"hello3"</span></span><br><span class="line">127.0.0.1:6379&gt; lrange mylist 0 -1<span class="comment">#查看源列表</span></span><br><span class="line">1) <span class="string">"hello2"</span></span><br><span class="line">127.0.0.1:6379&gt; lrange shane 0 -1<span class="comment">#查看目标列表</span></span><br><span class="line">1) <span class="string">"hello3"</span></span><br><span class="line">2) <span class="string">"two"</span></span><br><span class="line">3) <span class="string">"one"</span></span><br><span class="line"><span class="comment">################</span></span><br><span class="line"><span class="comment">#lset将列表中指定下标的值替换为另外一个值，更新操作</span></span><br><span class="line">127.0.0.1:6379&gt; exists list </span><br><span class="line">(<span class="built_in">integer</span>) 0</span><br><span class="line">127.0.0.1:6379&gt; lset list 0 item</span><br><span class="line">(error) ERR no such key</span><br><span class="line">127.0.0.1:6379&gt; lpush list value</span><br><span class="line">(<span class="built_in">integer</span>) 1</span><br><span class="line">127.0.0.1:6379&gt; lset list 0 item</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; lrange list 0 0</span><br><span class="line">1) <span class="string">"item"</span></span><br><span class="line"><span class="comment">##################</span></span><br><span class="line"><span class="comment">#linsert</span></span><br><span class="line">127.0.0.1:6379&gt; linsert shane before hello3 other<span class="comment">#在指定的元素的前面插入</span></span><br><span class="line">(<span class="built_in">integer</span>) 4</span><br><span class="line">127.0.0.1:6379&gt; lrange shane 0 -1</span><br><span class="line">1) <span class="string">"other"</span></span><br><span class="line">2) <span class="string">"hello3"</span></span><br><span class="line">3) <span class="string">"two"</span></span><br><span class="line">4) <span class="string">"one"</span></span><br><span class="line">127.0.0.1:6379&gt; linsert shane after hello3 new <span class="comment">#在指定的元素的后面插入</span></span><br><span class="line">(<span class="built_in">integer</span>) 5</span><br><span class="line">127.0.0.1:6379&gt; lrange shane 0 -1</span><br><span class="line">1) <span class="string">"other"</span></span><br><span class="line">2) <span class="string">"hello3"</span></span><br><span class="line">3) <span class="string">"new"</span></span><br><span class="line">4) <span class="string">"two"</span></span><br><span class="line">5) <span class="string">"one"</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>list实际上是一个链表</li>
+</ul>
+<p><strong>3、Set</strong></p>
+<p>set中的值不是重复的。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; sadd myset <span class="string">"hello"</span> <span class="comment">#set集合中添加元素</span></span><br><span class="line">(<span class="built_in">integer</span>) 1</span><br><span class="line">127.0.0.1:6379&gt; sadd myset <span class="string">"shane "</span></span><br><span class="line">(<span class="built_in">integer</span>) 1</span><br><span class="line">127.0.0.1:6379&gt; smembers myset <span class="comment">#查看set的所有值</span></span><br><span class="line">1) <span class="string">"hello"</span></span><br><span class="line">2) <span class="string">"shane "</span></span><br><span class="line">127.0.0.1:6379&gt; sismember myset hello  <span class="comment">#判断某一个值是不是在set集合中</span></span><br><span class="line">(<span class="built_in">integer</span>) 1</span><br><span class="line"></span><br><span class="line"><span class="comment">#获取set集合中的内容元素个数</span></span><br><span class="line">127.0.0.1:6379&gt; scard myset</span><br><span class="line">(<span class="built_in">integer</span>) 2</span><br><span class="line"><span class="comment">#移除set集合中的某个元素</span></span><br><span class="line">127.0.0.1:6379&gt; srem myset hello</span><br><span class="line">(<span class="built_in">integer</span>) 1</span><br><span class="line">127.0.0.1:6379&gt; scard myset</span><br><span class="line">(<span class="built_in">integer</span>) 1</span><br><span class="line"></span><br><span class="line"><span class="comment">#随机获取其中的某个元素</span></span><br><span class="line">127.0.0.1:6379&gt; srandmember mysql</span><br><span class="line">(nil)</span><br><span class="line">127.0.0.1:6379&gt; srandmember myset</span><br><span class="line"><span class="string">"shane "</span></span><br><span class="line">127.0.0.1:6379&gt; sadd myset <span class="string">"hahahah"</span></span><br><span class="line">(<span class="built_in">integer</span>) 1</span><br><span class="line">127.0.0.1:6379&gt; sadd myset <span class="string">"shane1"</span></span><br><span class="line">(<span class="built_in">integer</span>) 1</span><br><span class="line">127.0.0.1:6379&gt; scard myset</span><br><span class="line">(<span class="built_in">integer</span>) 3</span><br><span class="line">127.0.0.1:6379&gt; srandmember myset 1</span><br><span class="line">1) <span class="string">"shane1"</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#删除指定的key，随机删除key</span></span><br><span class="line">127.0.0.1:6379&gt; spop myset</span><br><span class="line"><span class="string">"shane "</span></span><br><span class="line">127.0.0.1:6379&gt; smembers myset</span><br><span class="line">1) <span class="string">"shane1"</span></span><br><span class="line">2) <span class="string">"hahahah"</span></span><br><span class="line">127.0.0.1:6379&gt; </span><br><span class="line"></span><br><span class="line"><span class="comment">#将一个指定的值移动到另外一个set中</span></span><br><span class="line">127.0.0.1:6379&gt; sadd myset <span class="string">"shane:</span></span><br><span class="line"><span class="string">Invalid argument(s)</span></span><br><span class="line"><span class="string">127.0.0.1:6379&gt; sadd myset "</span>shane::</span><br><span class="line">Invalid argument(s)</span><br><span class="line">127.0.0.1:6379&gt; sadd myset <span class="string">"shane::"</span></span><br><span class="line">(<span class="built_in">integer</span>) 1</span><br><span class="line">127.0.0.1:6379&gt; sadd myset <span class="string">"zhansan"</span></span><br><span class="line">(<span class="built_in">integer</span>) 1</span><br><span class="line">127.0.0.1:6379&gt; sadd myset <span class="string">"lisi"</span></span><br><span class="line">(<span class="built_in">integer</span>) 1</span><br><span class="line">127.0.0.1:6379&gt; sadd myset2 <span class="string">"hahahah"</span></span><br><span class="line">(<span class="built_in">integer</span>) 1</span><br><span class="line">127.0.0.1:6379&gt; smove myset myset2 zhansan</span><br><span class="line">(<span class="built_in">integer</span>) 1</span><br><span class="line">127.0.0.1:6379&gt; smembers myset</span><br><span class="line">1) <span class="string">"lisi"</span></span><br><span class="line">2) <span class="string">"shane::"</span></span><br><span class="line">127.0.0.1:6379&gt; smembers myset2</span><br><span class="line">1) <span class="string">"hahahah"</span></span><br><span class="line">2) <span class="string">"zhansan"</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#集合操作</span></span><br><span class="line">127.0.0.1:6379&gt; sadd key1 a</span><br><span class="line">(<span class="built_in">integer</span>) 1</span><br><span class="line">127.0.0.1:6379&gt; sadd key1 b</span><br><span class="line">(<span class="built_in">integer</span>) 1</span><br><span class="line">127.0.0.1:6379&gt; sadd key1 c</span><br><span class="line">(<span class="built_in">integer</span>) 1</span><br><span class="line">127.0.0.1:6379&gt; sadd key2 c</span><br><span class="line">(<span class="built_in">integer</span>) 1</span><br><span class="line">127.0.0.1:6379&gt; sadd key2 d</span><br><span class="line">(<span class="built_in">integer</span>) 1</span><br><span class="line">127.0.0.1:6379&gt; sadd key2 e </span><br><span class="line">(<span class="built_in">integer</span>) 1</span><br><span class="line">127.0.0.1:6379&gt; sdiff key1 key2<span class="comment">#key1中取key2中没有的 </span></span><br><span class="line">1) <span class="string">"a"</span></span><br><span class="line">2) <span class="string">"b"</span></span><br><span class="line">127.0.0.1:6379&gt; sdiff key2 key1<span class="comment">#key2中取key1中没有的</span></span><br><span class="line">1) <span class="string">"e"</span></span><br><span class="line">2) <span class="string">"d"</span></span><br><span class="line">127.0.0.1:6379&gt; sinter key1 key2 <span class="comment">#key1和key2的交集</span></span><br><span class="line">1) <span class="string">"c"</span></span><br><span class="line">127.0.0.1:6379&gt; sunion key1 key2 <span class="comment">#key1和key2的并集</span></span><br><span class="line">1) <span class="string">"a"</span></span><br><span class="line">2) <span class="string">"c"</span></span><br><span class="line">3) <span class="string">"b"</span></span><br><span class="line">4) <span class="string">"d"</span></span><br><span class="line">5) <span class="string">"e"</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>4、Hash</strong><br>key-map（k-v）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; flushdb</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; hset myhash field1 shane<span class="comment">#set一个具体的key-value</span></span><br><span class="line">(<span class="built_in">integer</span>) 1</span><br><span class="line">127.0.0.1:6379&gt; hget myhash field1</span><br><span class="line"><span class="string">"shane"</span></span><br><span class="line">127.0.0.1:6379&gt; hmset myhash field hello field2 world<span class="comment">#set多个key-value</span></span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; hmget myhash field field2<span class="comment">#获取多个字段值</span></span><br><span class="line">1) <span class="string">"hello"</span></span><br><span class="line">2) <span class="string">"world"</span></span><br><span class="line">127.0.0.1:6379&gt; hgetall myhash<span class="comment">#获取所有的值</span></span><br><span class="line">1) <span class="string">"field1"</span></span><br><span class="line">2) <span class="string">"shane"</span></span><br><span class="line">3) <span class="string">"field"</span></span><br><span class="line">4) <span class="string">"hello"</span></span><br><span class="line">5) <span class="string">"field2"</span></span><br><span class="line">6) <span class="string">"world"</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#删除指定的key字段，对应的value一起删除</span></span><br><span class="line">127.0.0.1:6379&gt; hdel myhash field1</span><br><span class="line">(<span class="built_in">integer</span>) 1</span><br><span class="line">127.0.0.1:6379&gt; hgetall myhash</span><br><span class="line">1) <span class="string">"field"</span></span><br><span class="line">2) <span class="string">"hello"</span></span><br><span class="line">3) <span class="string">"field2"</span></span><br><span class="line">4) <span class="string">"world"</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#hlen获取hash表的长度</span></span><br><span class="line">127.0.0.1:6379&gt;  hlen myhash</span><br><span class="line">(<span class="built_in">integer</span>) 2</span><br><span class="line"></span><br><span class="line"><span class="comment">#hexists 判断是否存在对应的key</span></span><br><span class="line">127.0.0.1:6379&gt; hexists myhash field2</span><br><span class="line">(<span class="built_in">integer</span>) 1</span><br><span class="line">127.0.0.1:6379&gt; hexists myhash field</span><br><span class="line">(<span class="built_in">integer</span>) 1</span><br><span class="line">127.0.0.1:6379&gt; hexists myhash fiel</span><br><span class="line">(<span class="built_in">integer</span>) 0</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#获得所有的value</span></span><br><span class="line">127.0.0.1:6379&gt; hvals myhash</span><br><span class="line">1) <span class="string">"hello"</span></span><br><span class="line">2) <span class="string">"world"</span></span><br><span class="line"><span class="comment">#只获得所有field值</span></span><br><span class="line">127.0.0.1:6379&gt; hkeys myhash</span><br><span class="line">1) <span class="string">"field"</span></span><br><span class="line">2) <span class="string">"field2"</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#incr</span></span><br><span class="line">127.0.0.1:6379&gt; hset myhash fields3 5</span><br><span class="line">(<span class="built_in">integer</span>) 1</span><br><span class="line">127.0.0.1:6379&gt; hincrby myhash fields3 1<span class="comment">#指定增量1</span></span><br><span class="line">(<span class="built_in">integer</span>) 6</span><br><span class="line"></span><br><span class="line">127.0.0.1:6379&gt; hsetnx myhash field4 hello<span class="comment">#如果不存在可以创建</span></span><br><span class="line">(<span class="built_in">integer</span>) 1</span><br><span class="line">127.0.0.1:6379&gt; hsetnx myhash field4 hello<span class="comment">#如果存在不可以设置</span></span><br><span class="line">(<span class="built_in">integer</span>) 0</span><br></pre></td></tr></table></figure>
+
+<p>hash变更的数据user name age,尤其是用户信息之类的，经常变动的 信息！hash更加适合对象的存储，String更加适合字符串的存储</p>
+<p><strong>5、Zset（有序集合）</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; zadd myZset 1 one</span><br><span class="line">(<span class="built_in">integer</span>) 1</span><br><span class="line">127.0.0.1:6379&gt; zadd myzset 2 two 3 three</span><br><span class="line">(<span class="built_in">integer</span>) 2</span><br><span class="line">127.0.0.1:6379&gt; zrange myzset 0 -1</span><br><span class="line">1) <span class="string">"two"</span></span><br><span class="line">2) <span class="string">"three"</span></span><br><span class="line">127.0.0.1:6379&gt; zadd myZset 2 two 3 three </span><br><span class="line">(<span class="built_in">integer</span>) 2</span><br><span class="line">127.0.0.1:6379&gt; zrange myZset 0 -1</span><br><span class="line">1) <span class="string">"one"</span></span><br><span class="line">2) <span class="string">"two"</span></span><br><span class="line">3) <span class="string">"three"</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#既然是有序的，就可以排序</span></span><br><span class="line">127.0.0.1:6379&gt; zadd salary 2500 zhangsan</span><br><span class="line">(<span class="built_in">integer</span>) 1</span><br><span class="line">127.0.0.1:6379&gt; zadd salary 3000 lisi</span><br><span class="line">(<span class="built_in">integer</span>) 1</span><br><span class="line">127.0.0.1:6379&gt; zadd salary 300 wangwu</span><br><span class="line">(<span class="built_in">integer</span>) 1</span><br><span class="line">127.0.0.1:6379&gt; zrangebyscore salary -inf +inf</span><br><span class="line">1) <span class="string">"wangwu"</span></span><br><span class="line">2) <span class="string">"zhangsan"</span></span><br><span class="line">3) <span class="string">"lisi"</span></span><br><span class="line">127.0.0.1:6379&gt; zrangebyscore salary -inf inf withscores</span><br><span class="line">1) <span class="string">"wangwu"</span></span><br><span class="line">2) <span class="string">"300"</span></span><br><span class="line">3) <span class="string">"zhangsan"</span></span><br><span class="line">4) <span class="string">"2500"</span></span><br><span class="line">5) <span class="string">"lisi"</span></span><br><span class="line">6) <span class="string">"3000"</span></span><br><span class="line">127.0.0.1:6379&gt; zrangebyscore salary -inf 2600 withscores</span><br><span class="line">1) <span class="string">"wangwu"</span></span><br><span class="line">2) <span class="string">"300"</span></span><br><span class="line">3) <span class="string">"zhangsan"</span></span><br><span class="line">4) <span class="string">"2500"</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#移除</span></span><br><span class="line">127.0.0.1:6379&gt; zrange salary 0 -1<span class="comment">#获取所有元素，默认从小到大</span></span><br><span class="line">1) <span class="string">"wangwu"</span></span><br><span class="line">2) <span class="string">"zhangsan"</span></span><br><span class="line">3) <span class="string">"lisi"</span></span><br><span class="line">127.0.0.1:6379&gt; zrevrange salary 0 -1<span class="comment">#默认从大到小进行排序</span></span><br><span class="line">1) <span class="string">"lisi"</span></span><br><span class="line">2) <span class="string">"wangwu"</span></span><br><span class="line">127.0.0.1:6379&gt; zrem salary zhangsan<span class="comment">#移除指定的元素</span></span><br><span class="line">(<span class="built_in">integer</span>) 1</span><br><span class="line">127.0.0.1:6379&gt; zrange salary 0 -1</span><br><span class="line">1) <span class="string">"wangwu"</span></span><br><span class="line">2) <span class="string">"lisi"</span></span><br><span class="line">127.0.0.1:6379&gt; zcard salary<span class="comment">#获取有序集合中的个数</span></span><br><span class="line">(<span class="built_in">integer</span>) 2</span><br><span class="line"></span><br><span class="line"><span class="comment">#按照区间获取成员数量</span></span><br><span class="line">127.0.0.1:6379&gt; zcount myset 1 3</span><br><span class="line">(<span class="built_in">integer</span>) 3</span><br><span class="line">127.0.0.1:6379&gt; zcount myset 1 2</span><br><span class="line">(<span class="built_in">integer</span>) 2</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://yoursite.com/2020/06/18/Redis%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%EF%BC%88%E4%B8%80%EF%BC%89/" title="Redis学习系列（一）" target="_blank" rel="external">http://yoursite.com/2020/06/18/Redis%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%EF%BC%88%E4%B8%80%EF%BC%89/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/shane0810" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/shane0810" target="_blank"><span class="text-dark">Shane</span><small class="ml-1x">Java Developer &amp; Designer</small></a></h3>
+        <div>个人简介。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    
+    <li class="next">
+      <a href="/2020/06/18/Linux%E5%AE%89%E8%A3%85Redis/" title="Linux安装Redis"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/shane0810" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="http://weibo.com/shane0810" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: '',
+    appKey: '',
+    placeholder: 'Just go go',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: false
+  });
+  </script>
+
+     
+
+
+
+
+
+
+
+</body>
+</html>
