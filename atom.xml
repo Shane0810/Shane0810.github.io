@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2020-05-12T05:34:00.402Z</updated>
+  <updated>2020-06-18T03:18:34.223Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,30 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Linux安装JDK1.8</title>
+    <link href="http://yoursite.com/2020/06/18/Linux%E5%AE%89%E8%A3%85JDK1-8/"/>
+    <id>http://yoursite.com/2020/06/18/Linux%E5%AE%89%E8%A3%85JDK1-8/</id>
+    <published>2020-06-18T03:13:19.000Z</published>
+    <updated>2020-06-18T03:18:34.223Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="Linux安装JDK1-8"><a href="#Linux安装JDK1-8" class="headerlink" title="Linux安装JDK1.8"></a>Linux安装JDK1.8</h1><h2 id="1、下载JDK"><a href="#1、下载JDK" class="headerlink" title="1、下载JDK"></a>1、下载JDK</h2><p>Oracle 官网下载JDK版本，准备安装</p><blockquote><p>本次安装：jdk-8u251-linux-x64.tar.gz</p></blockquote><h2 id="2、创建目录"><a href="#2、创建目录" class="headerlink" title="2、创建目录"></a>2、创建目录</h2><p>在/usr/目录下创建java目录</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mkdir &#x2F;usr&#x2F;java</span><br><span class="line">cd &#x2F;usr&#x2F;java</span><br></pre></td></tr></table></figure><p>把下载的文件放在/usr/java/目录下</p><h2 id="3、解压JDK"><a href="#3、解压JDK" class="headerlink" title="3、解压JDK"></a>3、解压JDK</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar -zxvf jdk-8u151-linux-x64.tar.gz</span><br></pre></td></tr></table></figure><h3 id="4、设置环境变量"><a href="#4、设置环境变量" class="headerlink" title="4、设置环境变量"></a>4、设置环境变量</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim &#x2F;etc&#x2F;profile</span><br></pre></td></tr></table></figure><p>在最后添加</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">set java environment</span><br><span class="line">JAVA_HOME&#x3D;&#x2F;usr&#x2F;java&#x2F;jdk1.8.0_251        </span><br><span class="line">JRE_HOME&#x3D;&#x2F;usr&#x2F;java&#x2F;jdk1.8.0_251&#x2F;jre     </span><br><span class="line">CLASS_PATH&#x3D;.:$JAVA_HOME&#x2F;lib&#x2F;dt.jar:$JAVA_HOME&#x2F;lib&#x2F;tools.jar:$JRE_HOME&#x2F;lib</span><br><span class="line">PATH&#x3D;$PATH:$JAVA_HOME&#x2F;bin:$JRE_HOME&#x2F;bin</span><br><span class="line">export JAVA_HOME JRE_HOME CLASS_PATH PATH</span><br></pre></td></tr></table></figure><ul><li>注意JAVA_HOME、JRE_HOME版本号对应，路径的正确。</li></ul><p>让修改生效</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">source &#x2F;etc&#x2F;profile</span><br></pre></td></tr></table></figure><h2 id="5、验证"><a href="#5、验证" class="headerlink" title="5、验证"></a>5、验证</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -version</span><br></pre></td></tr></table></figure><p>显示</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@izbp10mqmhqvedm1cjhdulz jdk1.8.0_251]# java -version</span><br><span class="line">java version &quot;1.8.0_251&quot;</span><br><span class="line">Java(TM) SE Runtime Environment (build 1.8.0_251-b08)</span><br><span class="line">Java HotSpot(TM) 64-Bit Server VM (build 25.251-b08, mixed mode)</span><br></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h1 id=&quot;Linux安装JDK1-8&quot;&gt;&lt;a href=&quot;#Linux安装JDK1-8&quot; class=&quot;headerlink&quot; title=&quot;Linux安装JDK1.8&quot;&gt;&lt;/a&gt;Linux安装JDK1.8&lt;/h1&gt;&lt;h2 id=&quot;1、下载JDK&quot;&gt;&lt;a href=&quot;#1、
+      
+    
+    </summary>
+    
+    
+    
+      <category term="软件安装" scheme="http://yoursite.com/tags/%E8%BD%AF%E4%BB%B6%E5%AE%89%E8%A3%85/"/>
+    
+  </entry>
   
   <entry>
     <title>SpringBoot:diy启动类</title>
