@@ -17,16 +17,21 @@
   <meta http-equiv="window-target" content="_top" />
   
   
-  <title>归档: 2020/6 | Shane</title>
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Shane">
-<meta property="og:url" content="http://yoursite.com/archives/2020/06/index.html">
+  <title>Linux安装Redis | Shane</title>
+  <meta name="description" content="服务器安装Redis 这次吸取教训，将所有的安装步骤都记录下来，不然可太伤了 ！！！重要 记得redis不能公开ip访问，否则容易被攻击，亲身体验  下载Redis官网下载  本次版本：redis-6.0.3.tar.gz  解压将安装包放到&#x2F;opt下并解压 1tar -zxvf redis-6.0.3.tar.gz  编译安装安装编译环境 1yum install gcc-c++  1make">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux安装Redis">
+<meta property="og:url" content="http://yoursite.com/2020/06/18/Linux%E5%AE%89%E8%A3%85Redis/index.html">
 <meta property="og:site_name" content="Shane">
+<meta property="og:description" content="服务器安装Redis 这次吸取教训，将所有的安装步骤都记录下来，不然可太伤了 ！！！重要 记得redis不能公开ip访问，否则容易被攻击，亲身体验  下载Redis官网下载  本次版本：redis-6.0.3.tar.gz  解压将安装包放到&#x2F;opt下并解压 1tar -zxvf redis-6.0.3.tar.gz  编译安装安装编译环境 1yum install gcc-c++  1make">
 <meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-06-18T04:34:57.000Z">
+<meta property="article:modified_time" content="2020-06-18T04:37:49.437Z">
 <meta property="article:author" content="John Doe">
+<meta property="article:tag" content="软件安装">
 <meta name="twitter:card" content="summary">
   <!-- Canonical links -->
-  <link rel="canonical" href="http://yoursite.com/archives/2020/06/index.html">
+  <link rel="canonical" href="http://yoursite.com/2020/06/18/Linux%E5%AE%89%E8%A3%85Redis/index.html">
   
     <link rel="alternate" href="/atom.xml" title="Shane" type="application/atom+xml">
   
@@ -331,58 +336,172 @@
   
   
 <main class="main" role="main">
-  	<article class="content article article-archives article-type-list" itemscope="">
-	    <header class="article-header">
-	      <h1 itemprop="title">归档: 2020/6</h1>
-	      <p class="text-muted">共 2 篇文章</p>
-	    </header>
-	    <div class="article-body">
-	      
-  
-  
+  <div class="content">
+  <article id="post-Linux安装Redis" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
     
-    
+    <div class="article-header">
       
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Linux安装Redis
+    </h1>
+  
+
       
-      <section class="panel panel-default b-no">
-        <div class="panel-heading" role="tab">
-          <h3 class="panel-title">
-            <a data-toggle="collapse" href="#collapse2020" aria-expanded="true">
-              <i class="icon icon-calendar-plus text-active"></i><i class="icon icon-calendar-minus text"></i>
-              2020
-            </a>
-            <!-- <a href="/archives/2020" class="archive-year">2020</a> -->
-          </h3>
-        </div>
-        <div id="collapse2020" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading2020">
-        <div class="panel-body">
-          <div class="collection">
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/06/18/Linux%E5%AE%89%E8%A3%85Redis/" class="article-date">
+	  <time datetime="2020-06-18T04:34:57.000Z" itemprop="datePublished">2020-06-18</time>
+	</a>
+</span>
+        
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link" href="/tags/%E8%BD%AF%E4%BB%B6%E5%AE%89%E8%A3%85/" rel="tag">软件安装</a>
+  </span>
+
+
+        
+	<span class="article-read hidden-xs">
+	    <i class="icon icon-eye-fill" aria-hidden="true"></i>
+	    <span id="busuanzi_container_page_pv">
+			<span id="busuanzi_value_page_pv">0</span>
+		</span>
+	</span>
+
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/06/18/Linux%E5%AE%89%E8%A3%85Redis/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 291(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 1(分)</span>
+	
+
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h1 id="服务器安装Redis"><a href="#服务器安装Redis" class="headerlink" title="服务器安装Redis"></a>服务器安装Redis</h1><ul>
+<li>这次吸取教训，将所有的安装步骤都记录下来，不然可太伤了</li>
+<li>！！！<strong>重要</strong> 记得redis不能公开ip访问，否则容易被攻击，亲身体验</li>
+</ul>
+<h2 id="下载Redis"><a href="#下载Redis" class="headerlink" title="下载Redis"></a>下载Redis</h2><p>官网下载</p>
+<blockquote>
+<p>本次版本：redis-6.0.3.tar.gz</p>
+</blockquote>
+<h2 id="解压"><a href="#解压" class="headerlink" title="解压"></a>解压</h2><p>将安装包放到/opt下并解压</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar -zxvf redis-6.0.3.tar.gz</span><br></pre></td></tr></table></figure>
+
+<h2 id="编译安装"><a href="#编译安装" class="headerlink" title="编译安装"></a>编译安装</h2><p>安装编译环境</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install gcc-c++</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make</span><br></pre></td></tr></table></figure>
+
+<p>等待编译完成</p>
+<p>报错</p>
+<p>是因为gcc版本过低，默认是4.8.5，而6以上的都需要新的 gcc支持</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;升级gcc到9以上</span><br><span class="line">yum -y install centos-release-scl</span><br><span class="line">yum -y install devtoolset-9-gcc devtoolset-9-gcc-c++ devtoolset-9-binutils</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;临时将此时的gcc版本改为9</span><br><span class="line">scl enable devtoolset-9 bash</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">make</span><br><span class="line">make install</span><br></pre></td></tr></table></figure>
+
+<p>redis默认安装路径 usr/local/bin</p>
+<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><p>新建一个文件夹，在usr/local/bin下，myconfig</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mkdir myconfig</span><br></pre></td></tr></table></figure>
+
+<p>将配置文件拷贝过来</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cp &#x2F;opt&#x2F;redis-6.0.3&#x2F;redis.conf myconfig&#x2F;</span><br></pre></td></tr></table></figure>
+
+<p>修改配置文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim redis.conf</span><br></pre></td></tr></table></figure>
+
+<h2 id="开启服务"><a href="#开启服务" class="headerlink" title="开启服务"></a>开启服务</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">redis-server myconfig&#x2F;redis.conf</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;使用redis-cli连接，使用redis</span><br><span class="line">redis-cli -p 6379</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;查看redis进程</span><br><span class="line">ps -ef|grep redis</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;关闭</span><br><span class="line">在redis-cli下键入</span><br><span class="line">shutdown</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
     
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://yoursite.com/2020/06/18/Linux%E5%AE%89%E8%A3%85Redis/" title="Linux安装Redis" target="_blank" rel="external">http://yoursite.com/2020/06/18/Linux%E5%AE%89%E8%A3%85Redis/</a>
+    </li>
     
-<a href="/2020/06/18/Linux%E5%AE%89%E8%A3%85Redis/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2020-06-18T04:34:57.000Z" itemprop="datePublished">2020-06-18</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> Linux安装Redis
-</a>
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/shane0810" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/shane0810" target="_blank"><span class="text-dark">Shane</span><small class="ml-1x">Java Developer &amp; Designer</small></a></h3>
+        <div>个人简介。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
 
 
   
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
     
     
+    <li class="next">
+      <a href="/2020/06/18/Linux%E5%AE%89%E8%A3%85JDK1-8/" title="Linux安装JDK1.8"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
     
-<a href="/2020/06/18/Linux%E5%AE%89%E8%A3%85JDK1-8/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2020-06-18T03:13:19.000Z" itemprop="datePublished">2020-06-18</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> Linux安装JDK1.8
-</a>
-
-
+    
+  </ul>
   
   
-    </div></div></div></section>
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
   
 
-	    </div>
-  	</article>
-  	 	
+
 </main>
 
   <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
@@ -439,6 +558,39 @@ window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
 
 
 
+
+   
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: '',
+    appKey: '',
+    placeholder: 'Just go go',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: false
+  });
+  </script>
+
+     
 
 
 
