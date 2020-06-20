@@ -17,16 +17,24 @@
   <meta http-equiv="window-target" content="_top" />
   
   
-  <title>归档: 2020 | Shane</title>
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Shane">
-<meta property="og:url" content="http://yoursite.com/archives/2020/index.html">
+  <title>Redis学习系列（三）持久化 | Shane</title>
+  <meta name="description" content="Redis(三) 持久化为何要持久化？redis是内存数据库，不过不将内存中的数据保存到磁盘，那么一旦服务器进程退出，服务器中的数据库状态也会消失。所以redis提供了持久化功能。 RDB 在指定的时间间隔内将内存中的数据集快照写入磁盘中，也就是进行Snapshot快照，恢复时将快照文件直接读到内存。 Redis会单独创建（fork）一个子进程来进行持久化，会先将数据写入到一个临时文件中，待持久化">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis学习系列（三）持久化">
+<meta property="og:url" content="http://yoursite.com/2020/06/20/Redis%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%EF%BC%88%E4%B8%89%EF%BC%89%E6%8C%81%E4%B9%85%E5%8C%96/index.html">
 <meta property="og:site_name" content="Shane">
+<meta property="og:description" content="Redis(三) 持久化为何要持久化？redis是内存数据库，不过不将内存中的数据保存到磁盘，那么一旦服务器进程退出，服务器中的数据库状态也会消失。所以redis提供了持久化功能。 RDB 在指定的时间间隔内将内存中的数据集快照写入磁盘中，也就是进行Snapshot快照，恢复时将快照文件直接读到内存。 Redis会单独创建（fork）一个子进程来进行持久化，会先将数据写入到一个临时文件中，待持久化">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yoursite.com/2020/06/20/Redis%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%EF%BC%88%E4%B8%89%EF%BC%89%E6%8C%81%E4%B9%85%E5%8C%96/image-20200620174911018.png">
+<meta property="og:image" content="http://yoursite.com/2020/06/20/Redis%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%EF%BC%88%E4%B8%89%EF%BC%89%E6%8C%81%E4%B9%85%E5%8C%96/image-20200620204549761.png">
+<meta property="article:published_time" content="2020-06-20T14:55:42.000Z">
+<meta property="article:modified_time" content="2020-06-20T15:04:59.698Z">
 <meta property="article:author" content="John Doe">
+<meta property="article:tag" content="Redis">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2020/06/20/Redis%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%EF%BC%88%E4%B8%89%EF%BC%89%E6%8C%81%E4%B9%85%E5%8C%96/image-20200620174911018.png">
   <!-- Canonical links -->
-  <link rel="canonical" href="http://yoursite.com/archives/2020/index.html">
+  <link rel="canonical" href="http://yoursite.com/2020/06/20/Redis%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%EF%BC%88%E4%B8%89%EF%BC%89%E6%8C%81%E4%B9%85%E5%8C%96/index.html">
   
     <link rel="alternate" href="/atom.xml" title="Shane" type="application/atom+xml">
   
@@ -331,118 +339,191 @@
   
   
 <main class="main" role="main">
-  	<article class="content article article-archives article-type-list" itemscope="">
-	    <header class="article-header">
-	      <h1 itemprop="title">归档: 2020</h1>
-	      <p class="text-muted">共 8 篇文章</p>
-	    </header>
-	    <div class="article-body">
-	      
-  
-  
+  <div class="content">
+  <article id="post-Redis学习系列（三）持久化" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
     
-    
+    <div class="article-header">
       
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Redis学习系列（三）持久化
+    </h1>
+  
+
       
-      <section class="panel panel-default b-no">
-        <div class="panel-heading" role="tab">
-          <h3 class="panel-title">
-            <a data-toggle="collapse" href="#collapse2020" aria-expanded="true">
-              <i class="icon icon-calendar-plus text-active"></i><i class="icon icon-calendar-minus text"></i>
-              2020
-            </a>
-            <!-- <a href="/archives/2020" class="archive-year">2020</a> -->
-          </h3>
-        </div>
-        <div id="collapse2020" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading2020">
-        <div class="panel-body">
-          <div class="collection">
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/06/20/Redis%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%EF%BC%88%E4%B8%89%EF%BC%89%E6%8C%81%E4%B9%85%E5%8C%96/" class="article-date">
+	  <time datetime="2020-06-20T14:55:42.000Z" itemprop="datePublished">2020-06-20</time>
+	</a>
+</span>
+        
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link" href="/tags/Redis/" rel="tag">Redis</a>
+  </span>
+
+
+        
+	<span class="article-read hidden-xs">
+	    <i class="icon icon-eye-fill" aria-hidden="true"></i>
+	    <span id="busuanzi_container_page_pv">
+			<span id="busuanzi_value_page_pv">0</span>
+		</span>
+	</span>
+
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/06/20/Redis%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%EF%BC%88%E4%B8%89%EF%BC%89%E6%8C%81%E4%B9%85%E5%8C%96/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 728(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 2(分)</span>
+	
+
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h1 id="Redis-三-持久化"><a href="#Redis-三-持久化" class="headerlink" title="Redis(三) 持久化"></a>Redis(三) 持久化</h1><p><strong>为何要持久化？</strong>redis是内存数据库，不过不将内存中的数据保存到磁盘，那么一旦服务器进程退出，服务器中的数据库状态也会消失。所以redis提供了持久化功能。</p>
+<h2 id="RDB"><a href="#RDB" class="headerlink" title="RDB"></a>RDB</h2><p><img src="image-20200620174911018.png" alt="alt"></p>
+<p>在指定的时间间隔内将内存中的数据集快照写入磁盘中，也就是进行Snapshot快照，恢复时将快照文件直接读到内存。</p>
+<p>Redis会单独创建（fork）一个子进程来进行持久化，会先将数据写入到一个临时文件中，待持久化过程都结束了，再用这个临时文件替换上次持久化好的文件，整个过程中，主进程不进行任何IO操作，确保极高的性能。如果进行大规模的数据恢复，且对于数据恢复的完整性不是非常敏感，那RDB方式要比AOF方式更加有效，缺点时最后一个持久化的数据可能会丢失。</p>
+<h3 id="1、RDB文件的触发"><a href="#1、RDB文件的触发" class="headerlink" title="1、RDB文件的触发"></a>1、RDB文件的触发</h3><ul>
+<li>save规则满足的条件下。 会自动触发</li>
+<li>执行flushall命令，也会自动触发</li>
+<li>退出redis，会产生rdb文件</li>
+</ul>
+<h3 id="2、RDB文件的恢复"><a href="#2、RDB文件的恢复" class="headerlink" title="2、RDB文件的恢复"></a>2、RDB文件的恢复</h3><ul>
+<li>只要将rdb文件放在我们redis启动目录就可以，redis启动的时候会自动检查dump.rdb恢复其中的数据</li>
+<li>查看需要存放的位置。</li>
+</ul>
+<h3 id="3、优缺点"><a href="#3、优缺点" class="headerlink" title="3、优缺点"></a>3、优缺点</h3><p>优点：</p>
+<ul>
+<li>适合大规模的数据恢复</li>
+<li>如果对数据完整性要求不高，比较适合使用</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>需要一定的时间间隔进行操作，如果redis意外宕机，意味着最后一次修改的数据就没有 了</li>
+<li>fork进程的时候，会占用一定的内存空间。</li>
+</ul>
+<h2 id="AOF-Append-Only-File"><a href="#AOF-Append-Only-File" class="headerlink" title="AOF(Append Only File)"></a>AOF(Append Only File)</h2><p>将我们的所有命令都记录下来，然后再恢复的时候直接全部执行一遍。</p>
+<p><img src="image-20200620204549761.png" alt="alt"></p>
+<p>以日志的形式记录每个操作，将Redis执行过的所有指令记录下来（读操作不记录），只追加文件但不可以改写文件，redis启动之初将会读该文件重新构建数据，换言之，redis重启是根据日志文件的内容将写指令从前到后执行一次以完成数据的恢复工作。</p>
+<blockquote>
+<p>修复</p>
+</blockquote>
+<p>如果aof文件被篡改，导致redis在关机后重启失败，可以使用</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">redis-check-aof --fix appendonly.aof</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>重写</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">auto-aof-rewrite-percentage 100</span><br><span class="line">auto-aof-rewrite-min-size 64mb</span><br></pre></td></tr></table></figure>
+
+<p>如果aof文件大于64mb，fork一个新的进程来重写我们的文件</p>
+<blockquote>
+<p>优缺点</p>
+</blockquote>
+<p>优点：</p>
+<ul>
+<li><p>每一次修改都同步，文件的完整性更加好</p>
+</li>
+<li><p>每秒同步一次，可能会丢失一秒的数据（同步机制可以设置）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#appendfsync always</span></span><br><span class="line">appendfsync everysec</span><br><span class="line"><span class="comment">#appendfsync no</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>从不同步，效率是最高的</p>
+</li>
+</ul>
+<p>缺点</p>
+<ul>
+<li>相对于数据文件来说，aof远大于rdb，修复速度慢</li>
+<li>运行效率小于rdb</li>
+</ul>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
     
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://yoursite.com/2020/06/20/Redis%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%EF%BC%88%E4%B8%89%EF%BC%89%E6%8C%81%E4%B9%85%E5%8C%96/" title="Redis学习系列（三）持久化" target="_blank" rel="external">http://yoursite.com/2020/06/20/Redis%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%EF%BC%88%E4%B8%89%EF%BC%89%E6%8C%81%E4%B9%85%E5%8C%96/</a>
+    </li>
     
-<a href="/2020/06/20/Redis%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%EF%BC%88%E5%9B%9B%EF%BC%89%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2020-06-20T14:55:56.000Z" itemprop="datePublished">2020-06-20</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> Redis学习系列（四）主从复制
-</a>
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/shane0810" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/shane0810" target="_blank"><span class="text-dark">Shane</span><small class="ml-1x">Java Developer &amp; Designer</small></a></h3>
+        <div>个人简介。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
 
 
   
-    
-    
-    
-<a href="/2020/06/20/Redis%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%EF%BC%88%E4%B8%89%EF%BC%89%E6%8C%81%E4%B9%85%E5%8C%96/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2020-06-20T14:55:42.000Z" itemprop="datePublished">2020-06-20</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> Redis学习系列（三）持久化
-</a>
+</div>
 
-
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
   
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2020/06/20/Redis%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%EF%BC%88%E5%9B%9B%EF%BC%89%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/" title="Redis学习系列（四）主从复制"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
     
     
-    
-<a href="/2020/06/18/Redis%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%EF%BC%88%E4%B8%80%EF%BC%89/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2020-06-18T13:29:07.000Z" itemprop="datePublished">2020-06-18</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> Redis学习系列（一）
-</a>
-
-
-  
+    <li class="next">
+      <a href="/2020/06/18/Redis%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%EF%BC%88%E4%B8%80%EF%BC%89/" title="Redis学习系列（一）"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
     
     
-    
-<a href="/2020/06/18/Linux%E5%AE%89%E8%A3%85Redis/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2020-06-18T04:34:57.000Z" itemprop="datePublished">2020-06-18</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> Linux安装Redis
-</a>
-
-
-  
-    
-    
-    
-<a href="/2020/06/18/Linux%E5%AE%89%E8%A3%85JDK1-8/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2020-06-18T03:13:19.000Z" itemprop="datePublished">2020-06-18</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> Linux安装JDK1.8
-</a>
-
-
-  
-    
-    
-    
-<a href="/2020/05/12/SpringBoot-diy%E5%90%AF%E5%8A%A8%E7%B1%BB/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2020-05-12T05:29:27.000Z" itemprop="datePublished">2020-05-12</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> SpringBoot:diy启动类
-</a>
-
-
-  
-    
-    
-    
-<a href="/2020/05/10/SSM%E6%95%B4%E5%90%88%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2020-05-10T13:13:13.000Z" itemprop="datePublished">2020-05-10</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> SSM整合学习笔记
-</a>
-
-
-  
-    
-    
-    
-<a href="/2020/05/09/SpringMVC%E4%B9%8B%E5%85%A5%E9%97%A8/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2020-05-09T05:15:39.000Z" itemprop="datePublished">2020-05-09</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> SpringMVC之入门
-</a>
-
-
+  </ul>
   
   
-    </div></div></div></section>
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
   
 
-	    </div>
-  	</article>
-  	 	
+
 </main>
 
   <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
@@ -499,6 +580,39 @@ window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
 
 
 
+
+   
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: '',
+    appKey: '',
+    placeholder: 'Just go go',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: false
+  });
+  </script>
+
+     
 
 
 

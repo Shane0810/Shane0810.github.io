@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>Redis学习系列（四）主从复制 | Shane</title>
+  <meta name="description" content="Redis（四）主从复制概念主从复制，是指将一台Redis服务器的数据，复制到其他的Redis服务器，前者成为主节点（master）后者成为从节点（slave）；数据的复制是单向的，只能由主节点到从节点，Master以写为主，Slave只能读。 默认情况下，每台Redis服务器都是主节点，且一个主节点可以由多个从节点或者没有从节点。但是一个从节点只有一个主节点。 主从复制的作用主要包括  数据冗余">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis学习系列（四）主从复制">
+<meta property="og:url" content="http://yoursite.com/2020/06/20/Redis%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%EF%BC%88%E5%9B%9B%EF%BC%89%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/index.html">
+<meta property="og:site_name" content="Shane">
+<meta property="og:description" content="Redis（四）主从复制概念主从复制，是指将一台Redis服务器的数据，复制到其他的Redis服务器，前者成为主节点（master）后者成为从节点（slave）；数据的复制是单向的，只能由主节点到从节点，Master以写为主，Slave只能读。 默认情况下，每台Redis服务器都是主节点，且一个主节点可以由多个从节点或者没有从节点。但是一个从节点只有一个主节点。 主从复制的作用主要包括  数据冗余">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yoursite.com/2020/06/20/Redis%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%EF%BC%88%E5%9B%9B%EF%BC%89%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/image-20200620224443469.png">
+<meta property="og:image" content="http://yoursite.com/2020/06/20/Redis%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%EF%BC%88%E5%9B%9B%EF%BC%89%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/image-20200620225048149.png">
+<meta property="og:image" content="http://yoursite.com/2020/06/20/Redis%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%EF%BC%88%E5%9B%9B%EF%BC%89%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/image-20200620220120366.png">
+<meta property="og:image" content="http://yoursite.com/2020/06/20/Redis%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%EF%BC%88%E5%9B%9B%EF%BC%89%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/image-20200620220639671.png">
+<meta property="og:image" content="http://yoursite.com/2020/06/20/Redis%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%EF%BC%88%E5%9B%9B%EF%BC%89%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/image-20200620220651142.png">
+<meta property="og:image" content="http://yoursite.com/2020/06/20/Redis%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%EF%BC%88%E5%9B%9B%EF%BC%89%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/image-20200620220740201.png">
+<meta property="og:image" content="http://yoursite.com/2020/06/20/Redis%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%EF%BC%88%E5%9B%9B%EF%BC%89%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/image-20200620220854684.png">
+<meta property="article:published_time" content="2020-06-20T14:55:56.000Z">
+<meta property="article:modified_time" content="2020-06-20T15:03:15.652Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="Redis">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2020/06/20/Redis%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%EF%BC%88%E5%9B%9B%EF%BC%89%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/image-20200620224443469.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://yoursite.com/2020/06/20/Redis%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%EF%BC%88%E5%9B%9B%EF%BC%89%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="Shane" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/shane0810" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Shane</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Java Developer &amp; Designer</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Hangzhou, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-books">
+          <a href="/books">
+            
+            <i class="icon icon-book-fill"></i>
+            
+            <span class="menu-title">书单</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/shane0810" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="http://weibo.com/shane0810" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>目前只想好好做笔记！</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringBoot/" rel="tag">SpringBoot</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringMVC/" rel="tag">SpringMVC</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%BD%AF%E4%BB%B6%E5%AE%89%E8%A3%85/" rel="tag">软件安装</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/Redis/" style="font-size: 14px;">Redis</a> <a href="/tags/Spring/" style="font-size: 13px;">Spring</a> <a href="/tags/SpringBoot/" style="font-size: 13px;">SpringBoot</a> <a href="/tags/SpringMVC/" style="font-size: 13px;">SpringMVC</a> <a href="/tags/%E8%BD%AF%E4%BB%B6%E5%AE%89%E8%A3%85/" style="font-size: 13.5px;">软件安装</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">六月 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2020/06/20/Redis%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%EF%BC%88%E5%9B%9B%EF%BC%89%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/" class="title">Redis学习系列（四）主从复制</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-06-20T14:55:56.000Z" itemprop="datePublished">2020-06-20</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2020/06/20/Redis%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%EF%BC%88%E4%B8%89%EF%BC%89%E6%8C%81%E4%B9%85%E5%8C%96/" class="title">Redis学习系列（三）持久化</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-06-20T14:55:42.000Z" itemprop="datePublished">2020-06-20</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2020/06/18/Redis%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%EF%BC%88%E4%B8%80%EF%BC%89/" class="title">Redis学习系列（一）</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-06-18T13:29:07.000Z" itemprop="datePublished">2020-06-18</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2020/06/18/Linux%E5%AE%89%E8%A3%85Redis/" class="title">Linux安装Redis</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-06-18T04:34:57.000Z" itemprop="datePublished">2020-06-18</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2020/06/18/Linux%E5%AE%89%E8%A3%85JDK1-8/" class="title">Linux安装JDK1.8</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-06-18T03:13:19.000Z" itemprop="datePublished">2020-06-18</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-Redis学习系列（四）主从复制" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Redis学习系列（四）主从复制
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/06/20/Redis%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%EF%BC%88%E5%9B%9B%EF%BC%89%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/" class="article-date">
+	  <time datetime="2020-06-20T14:55:56.000Z" itemprop="datePublished">2020-06-20</time>
+	</a>
+</span>
+        
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link" href="/tags/Redis/" rel="tag">Redis</a>
+  </span>
+
+
+        
+	<span class="article-read hidden-xs">
+	    <i class="icon icon-eye-fill" aria-hidden="true"></i>
+	    <span id="busuanzi_container_page_pv">
+			<span id="busuanzi_value_page_pv">0</span>
+		</span>
+	</span>
+
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/06/20/Redis%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%EF%BC%88%E5%9B%9B%EF%BC%89%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 1.9k(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 8(分)</span>
+	
+
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h1 id="Redis（四）主从复制"><a href="#Redis（四）主从复制" class="headerlink" title="Redis（四）主从复制"></a>Redis（四）主从复制</h1><h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><p>主从复制，是指将一台Redis服务器的数据，复制到其他的Redis服务器，前者成为主节点（master）后者成为从节点（slave）；数据的复制是单向的，只能由主节点到从节点，Master以写为主，Slave只能读。</p>
+<p>默认情况下，每台Redis服务器都是主节点，且一个主节点可以由多个从节点或者没有从节点。但是一个从节点只有一个主节点。</p>
+<p><strong>主从复制的作用主要包括</strong></p>
+<ul>
+<li>数据冗余：主从复制实现了数据的热备份，是持久化之外的一种数据冗余方式</li>
+<li>故障恢复：当主节点出现问题，可以由从节点提供服务，实现快速的故障恢复，实际上是一种服务的冗余</li>
+<li>负载均衡：在主从复制的基础上，配合读写分离，可以由主节点提供写服务，由从节点提供读服务（即写Redis数据时连接主节点，读redis时应用从节点），分担服务器 负载，尤其在读多写少的情况之下。通过多个从节点分担读负载，可以大大提高redis的并发量</li>
+<li>高可用（集群）的基石：除了上述作用之外，主从复制还是哨兵和集群能够实现的基础，因此说是Redis高可用的基石。</li>
+</ul>
+<p>一般来说，要将Redis运用在实际的项目中，只使用一台Redis服务器是不可能的，原因：</p>
+<ul>
+<li>从结构上，单个Redis服务器会发生单点故障，一台服务器需要处理所有的负载，压力较大</li>
+<li>从容量上，单个Redis服务器内存容量限制，一般来说，单台Redis最大使用内存不应该超过20G</li>
+</ul>
+<h2 id="环境配置"><a href="#环境配置" class="headerlink" title="环境配置"></a>环境配置</h2><p>只需要配置从库，不需要配置主库，默认都是主库</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; info replication<span class="comment"># 查看当前库的信息</span></span><br><span class="line"><span class="comment"># Replication</span></span><br><span class="line">role:master<span class="comment">#表示主库</span></span><br><span class="line">connected_slaves:0</span><br><span class="line">master_replid:b242cbcae6532b3a74762010786610af9cdefecc</span><br><span class="line">master_replid2:0000000000000000000000000000000000000000</span><br><span class="line">master_repl_offset:0</span><br><span class="line">master_repl_meaningful_offset:0</span><br><span class="line">second_repl_offset:-1</span><br><span class="line">repl_backlog_active:0</span><br><span class="line">repl_backlog_size:1048576</span><br><span class="line">repl_backlog_first_byte_offset:0</span><br><span class="line">repl_backlog_histlen:0</span><br></pre></td></tr></table></figure>
+
+<p>复制三个配置文件，修改配置</p>
+<p>1、端口号</p>
+<p>2、pid名字</p>
+<p>3、log文件名字</p>
+<p>4、dump.rdb名字</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">[root@izbp10mqmhqvedm1cjhdulz bin]<span class="comment"># redis-server myconfig/redis-79.conf </span></span><br><span class="line">[root@izbp10mqmhqvedm1cjhdulz bin]<span class="comment"># ll</span></span><br><span class="line">total 45932</span><br><span class="line">-rw-r--r-- 1 root root     2380 Jun 20 21:31 6379.log</span><br><span class="line">-rw-r--r-- 1 root root      114 Jun 20 21:20 dump.rdb</span><br><span class="line">drwxr-xr-x 2 root root     4096 Jun 20 21:30 myconfig</span><br><span class="line">-rwxr-xr-x 1 root root  6397464 Jun 18 12:18 redis-benchmark</span><br><span class="line">-rwxr-xr-x 1 root root 11300096 Jun 18 12:18 redis-check-aof</span><br><span class="line">-rwxr-xr-x 1 root root 11300096 Jun 18 12:18 redis-check-rdb</span><br><span class="line">-rwxr-xr-x 1 root root  6719864 Jun 18 12:18 redis-cli</span><br><span class="line">lrwxrwxrwx 1 root root       12 Jun 18 12:18 redis-sentinel -&gt; redis-server</span><br><span class="line">-rwxr-xr-x 1 root root 11300096 Jun 18 12:18 redis-server</span><br><span class="line">[root@izbp10mqmhqvedm1cjhdulz bin]<span class="comment"># redis-server myconfig/redis-80.conf </span></span><br><span class="line">[root@izbp10mqmhqvedm1cjhdulz bin]<span class="comment"># redis-server myconfig/redis-81.conf </span></span><br><span class="line">[root@izbp10mqmhqvedm1cjhdulz bin]<span class="comment"># ll</span></span><br><span class="line">total 45940</span><br><span class="line">-rw-r--r-- 1 root root     2380 Jun 20 21:31 6379.log</span><br><span class="line">-rw-r--r-- 1 root root     2380 Jun 20 21:32 6380.log</span><br><span class="line">-rw-r--r-- 1 root root     2380 Jun 20 21:32 6381.log</span><br><span class="line">-rw-r--r-- 1 root root      114 Jun 20 21:20 dump.rdb</span><br><span class="line">drwxr-xr-x 2 root root     4096 Jun 20 21:30 myconfig</span><br><span class="line">-rwxr-xr-x 1 root root  6397464 Jun 18 12:18 redis-benchmark</span><br><span class="line">-rwxr-xr-x 1 root root 11300096 Jun 18 12:18 redis-check-aof</span><br><span class="line">-rwxr-xr-x 1 root root 11300096 Jun 18 12:18 redis-check-rdb</span><br><span class="line">-rwxr-xr-x 1 root root  6719864 Jun 18 12:18 redis-cli</span><br><span class="line">lrwxrwxrwx 1 root root       12 Jun 18 12:18 redis-sentinel -&gt; redis-server</span><br><span class="line">-rwxr-xr-x 1 root root 11300096 Jun 18 12:18 redis-server</span><br><span class="line">[root@izbp10mqmhqvedm1cjhdulz bin]<span class="comment"># ps -ef|grep redis</span></span><br><span class="line">root     11466     1  0 21:31 ?        00:00:00 redis-server 127.0.0.1:6379</span><br><span class="line">root     11473     1  0 21:32 ?        00:00:00 redis-server 127.0.0.1:6380</span><br><span class="line">root     11479     1  0 21:32 ?        00:00:00 redis-server 127.0.0.1:6381</span><br><span class="line">root     11488 11125  0 21:32 pts/0    00:00:00 grep --color=auto redis</span><br></pre></td></tr></table></figure>
+
+<h2 id="一主二从"><a href="#一主二从" class="headerlink" title="一主二从"></a>一主二从</h2><p>目前，所有的都是主节点。只需要配置从机</p>
+<p>从机配置</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6380&gt; slaveof 127.0.0.1 6379</span><br><span class="line">OK</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#从机6380</span></span><br><span class="line"></span><br><span class="line">127.0.0.1:6380&gt; info replication</span><br><span class="line"><span class="comment"># Replication</span></span><br><span class="line">role:slave</span><br><span class="line">master_host:127.0.0.1</span><br><span class="line">master_port:6379</span><br><span class="line">master_link_status:up</span><br><span class="line">master_last_io_seconds_ago:1</span><br><span class="line">master_sync_in_progress:0</span><br><span class="line">slave_repl_offset:0</span><br><span class="line">slave_priority:100</span><br><span class="line">slave_read_only:1</span><br><span class="line">connected_slaves:0</span><br><span class="line">master_replid:bb15c7dc4a4e0290cc5c0cafef652d2a8f2f91dc</span><br><span class="line">master_replid2:0000000000000000000000000000000000000000</span><br><span class="line">master_repl_offset:0</span><br><span class="line">master_repl_meaningful_offset:0</span><br><span class="line">second_repl_offset:-1</span><br><span class="line">repl_backlog_active:1</span><br><span class="line">repl_backlog_size:1048576</span><br><span class="line">repl_backlog_first_byte_offset:1</span><br><span class="line">repl_backlog_histlen:0</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#从机6281</span></span><br><span class="line">127.0.0.1:6381&gt; slaveof 127.0.0.1 6379</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6381&gt; info replication</span><br><span class="line"><span class="comment"># Replication</span></span><br><span class="line">role:slave</span><br><span class="line">master_host:127.0.0.1</span><br><span class="line">master_port:6379</span><br><span class="line">master_link_status:up</span><br><span class="line">master_last_io_seconds_ago:1</span><br><span class="line">master_sync_in_progress:0</span><br><span class="line">slave_repl_offset:168</span><br><span class="line">slave_priority:100</span><br><span class="line">slave_read_only:1</span><br><span class="line">connected_slaves:0</span><br><span class="line">master_replid:bb15c7dc4a4e0290cc5c0cafef652d2a8f2f91dc</span><br><span class="line">master_replid2:0000000000000000000000000000000000000000</span><br><span class="line">master_repl_offset:168</span><br><span class="line">master_repl_meaningful_offset:154</span><br><span class="line">second_repl_offset:-1</span><br><span class="line">repl_backlog_active:1</span><br><span class="line">repl_backlog_size:1048576</span><br><span class="line">repl_backlog_first_byte_offset:155</span><br><span class="line">repl_backlog_histlen:14</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#主机中查看信息。</span></span><br><span class="line"></span><br><span class="line">127.0.0.1:6379&gt; info replication</span><br><span class="line"><span class="comment"># Replication</span></span><br><span class="line">role:master</span><br><span class="line">connected_slaves:2</span><br><span class="line">slave0:ip=127.0.0.1,port=6380,state=online,offset=182,lag=1</span><br><span class="line">slave1:ip=127.0.0.1,port=6381,state=online,offset=182,lag=1</span><br><span class="line">master_replid:bb15c7dc4a4e0290cc5c0cafef652d2a8f2f91dc</span><br><span class="line">master_replid2:0000000000000000000000000000000000000000</span><br><span class="line">master_repl_offset:182</span><br><span class="line">master_repl_meaningful_offset:0</span><br><span class="line">second_repl_offset:-1</span><br><span class="line">repl_backlog_active:1</span><br><span class="line">repl_backlog_size:1048576</span><br><span class="line">repl_backlog_first_byte_offset:1</span><br><span class="line">repl_backlog_histlen:182</span><br><span class="line">127.0.0.1:6379&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="永久配置主从"><a href="#永久配置主从" class="headerlink" title="永久配置主从"></a>永久配置主从</h3><blockquote>
+<p>REPLICATION</p>
+</blockquote>
+<p>直接在配置文件中修改该字段。</p>
+<h2 id="主从复制的细节"><a href="#主从复制的细节" class="headerlink" title="主从复制的细节"></a>主从复制的细节</h2><ul>
+<li>主机可以写，从机不能，只能读</li>
+<li>主机中的所有数据和信息，都自动被从机保存。</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6380&gt; keys *</span><br><span class="line">1) <span class="string">"k1"</span></span><br><span class="line">127.0.0.1:6380&gt; get k1</span><br><span class="line"><span class="string">"v1"</span></span><br><span class="line">127.0.0.1:6380&gt; <span class="built_in">set</span> k2 v2</span><br><span class="line">(error) READONLY You can<span class="string">'t write against a read only replica.</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>主机断开连接，从机依旧连接到主机，重新连接之后，正常工作。</li>
+</ul>
+<p><strong>复制原理</strong><br>Slave启动成功之后连接到master后会发送一个sync命令</p>
+<p>Master接到命令，启动后台的存盘进程，同时收集所有接收到的用于修改数据集的命令，在后台进程执行完毕之hi偶，master将传送整个数据文件到slave，并完成一次完全同步。</p>
+<p>全量复制：slave服务在接收到数据库文件数据后，将其存盘并加载到内存中</p>
+<p>增量复制：Master继续将新的所有收集到的修改命令依次传递个slave，完成同步</p>
+<p>但是要重新连接master，一次完全同步（全量复制）将被自动执行。</p>
+<h2 id="哨兵模式（重点）"><a href="#哨兵模式（重点）" class="headerlink" title="哨兵模式（重点）"></a>哨兵模式（重点）</h2><h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p>主从切换技术的方法是：当主服务器宕机之后，需要手动把一台从服务器切换为主服务器，这就需要人工干预，费时费力，同时会造成一段时间内服务不可用。更多时候，需要考虑使用哨兵模式。</p>
+<p>哨兵模式是一种特殊的模式，首先Redis提供哨兵的命令，哨兵是一个独立的进程，作为进程，独立运行。原理是<strong>哨兵通过发送命令，等待Redis服务器响应，从而监控运行的多个Redis实例</strong></p>
+<p>在这里，烧饼的两个作用</p>
+<ul>
+<li>通过发送命令，让Redis服务器返回监控器运行状态信息，包括主从服务器</li>
+<li>当哨兵监测到master宕机，会自动将slave切换成master，然后通过发部订阅模式通知其他的从服务器，修改配置文件，切换主机。</li>
+</ul>
+<p><img src="image-20200620224443469.png" alt="alt"></p>
+<p>然而一个哨兵进程对Redis服务器进行监控，可能会 出现问题，为此，我们可以使用多个哨兵进行监控。各个哨兵之间还会进行监控</p>
+<p><img src="image-20200620225048149.png" alt="alt"></p>
+<p>假设主服务器宕机，哨兵1先检测到这个结果，系统并不会马上进行failover过程，仅仅是哨兵1主观的认为主服务器不可用，这个想象称为<strong>主观下线</strong>。当后面的哨兵也检测到主服务器不可用，并且数量达到一定的值时，那么哨兵之间就会进行一次投票，投票的结果由一个哨兵发起，进行failover（故障转移）操作。切换成功周，就会通过发布订阅模式，让各个哨兵把自己监控的从服务器实现切换主机，这个过程称为<strong>客观下线</strong>。</p>
+<h3 id="配置哨兵配置文件sentinel-conf"><a href="#配置哨兵配置文件sentinel-conf" class="headerlink" title="配置哨兵配置文件sentinel.conf"></a>配置哨兵配置文件sentinel.conf</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#sentinel monitor 被监控的名称 host port 1</span></span><br><span class="line">sentinel monitor myredis 127.0.0.1 6379 1</span><br></pre></td></tr></table></figure>
+
+<p>后面的数字1，代表主机挂了，slave投票看让谁替换成为主机，票数最多的，成为主机</p>
+<h3 id="启动哨兵"><a href="#启动哨兵" class="headerlink" title="启动哨兵"></a>启动哨兵</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">redis-sentinel myconfig/setinel.conf</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="image-20200620220120366.png" alt="alt"></p>
+<h3 id="主机宕机"><a href="#主机宕机" class="headerlink" title="主机宕机"></a>主机宕机</h3><p><img src="image-20200620220639671.png" alt="alt"></p>
+<p><img src="image-20200620220651142.png" alt="alt"></p>
+<p>发现主机已经变为6380</p>
+<p><img src="image-20200620220740201.png" alt="alt"></p>
+<p>如果主机回来了，只能成为slave</p>
+<p><img src="image-20200620220854684.png" alt="alt"></p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://yoursite.com/2020/06/20/Redis%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%EF%BC%88%E5%9B%9B%EF%BC%89%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/" title="Redis学习系列（四）主从复制" target="_blank" rel="external">http://yoursite.com/2020/06/20/Redis%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%EF%BC%88%E5%9B%9B%EF%BC%89%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/shane0810" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/shane0810" target="_blank"><span class="text-dark">Shane</span><small class="ml-1x">Java Developer &amp; Designer</small></a></h3>
+        <div>个人简介。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    
+    <li class="next">
+      <a href="/2020/06/20/Redis%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%EF%BC%88%E4%B8%89%EF%BC%89%E6%8C%81%E4%B9%85%E5%8C%96/" title="Redis学习系列（三）持久化"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/shane0810" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="http://weibo.com/shane0810" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: '',
+    appKey: '',
+    placeholder: 'Just go go',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: false
+  });
+  </script>
+
+     
+
+
+
+
+
+
+
+</body>
+</html>
