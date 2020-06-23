@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2020-06-20T15:09:28.724Z</updated>
+  <updated>2020-06-23T12:08:55.603Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,30 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Linux 安装RabbitMQ</title>
+    <link href="http://yoursite.com/2020/06/23/Linux-%E5%AE%89%E8%A3%85RabbitMQ/"/>
+    <id>http://yoursite.com/2020/06/23/Linux-%E5%AE%89%E8%A3%85RabbitMQ/</id>
+    <published>2020-06-23T12:04:55.000Z</published>
+    <updated>2020-06-23T12:08:55.603Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="Linux安装RabbitMQ"><a href="#Linux安装RabbitMQ" class="headerlink" title="Linux安装RabbitMQ"></a>Linux安装RabbitMQ</h1><h2 id="1、erlang的安装"><a href="#1、erlang的安装" class="headerlink" title="1、erlang的安装"></a>1、erlang的安装</h2><p>首先，使用</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">erl -version</span><br></pre></td></tr></table></figure><p>查看版本，卸载旧版本</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum remove erlang*</span><br></pre></td></tr></table></figure><p>之后安装erlang22.0</p><p>在etc/yum.repo.d/rabbitmq-erlang.repo下</p><blockquote><p><a href="https://github.com/rabbitmq/erlang-rpm" target="_blank" rel="noopener">https://github.com/rabbitmq/erlang-rpm</a></p></blockquote><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># In /etc/yum.repos.d/rabbitmq-erlang.repo</span></span><br><span class="line">[rabbitmq-erlang]</span><br><span class="line">name=rabbitmq-erlang</span><br><span class="line">baseurl=https://dl.bintray.com/rabbitmq-erlang/rpm/erlang/22/el/7</span><br><span class="line">gpgcheck=1</span><br><span class="line">gpgkey=https://dl.bintray.com/rabbitmq/Keys/rabbitmq-release-signing-key.asc</span><br><span class="line">repo_gpgcheck=0</span><br><span class="line">enabled=1</span><br></pre></td></tr></table></figure><p>执行</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install erlang</span><br></pre></td></tr></table></figure><h2 id="2、安装RabbitMQ-Server"><a href="#2、安装RabbitMQ-Server" class="headerlink" title="2、安装RabbitMQ Server"></a>2、安装RabbitMQ Server</h2><p>下载安装包</p><blockquote><p><a href="https://dl.bintray.com/rabbitmq/rpm/rabbitmq-server/v3.8.x/el/7/noarch/" target="_blank" rel="noopener">https://dl.bintray.com/rabbitmq/rpm/rabbitmq-server/v3.8.x/el/7/noarch/</a></p></blockquote><p><img src="image-20200623191247730.png" alt="alt"></p><p>然后上传到服务器</p><p>使用命令</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rpm -ivh rabbitmq-server-3.8.5-1.el7.noarch.rpm</span><br></pre></td></tr></table></figure><p>出现错误：</p><p><img src="image-20200623191344555.png" alt="alt"></p><p>安装socat</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install socat -y</span><br></pre></td></tr></table></figure><p><img src="image-20200623191427939.png" alt="alt"></p><p>继续执行</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rpm -ivh rabbitmq-server-3.8.5-1.el7.noarch.rpm</span><br></pre></td></tr></table></figure><p><img src="image-20200623191510620.png" alt="alt"></p><p>安装位置</p><p><img src="image-20200623192709163.png" alt="alt"></p><h2 id="3、启动"><a href="#3、启动" class="headerlink" title="3、启动"></a>3、启动</h2><p><img src="image-20200623193623869.png" alt="alt"></p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 启动</span></span><br><span class="line">systemctl start rabbitmq-server</span><br><span class="line"> </span><br><span class="line"><span class="comment"># 状态</span></span><br><span class="line">systemctl status rabbitmq-server</span><br><span class="line"> </span><br><span class="line"><span class="comment"># 关闭</span></span><br><span class="line">systemctl stop rabbitmq-server</span><br></pre></td></tr></table></figure><h2 id="4、配置文件"><a href="#4、配置文件" class="headerlink" title="4、配置文件"></a>4、配置文件</h2><blockquote><p><a href="https://github.com/rabbitmq/rabbitmq-server/blob/v3.7.x/docs/rabbitmq.conf.example" target="_blank" rel="noopener">https://github.com/rabbitmq/rabbitmq-server/blob/v3.7.x/docs/rabbitmq.conf.example</a></p></blockquote><p>在etc/rabbitmq目录下新建rabbitmq.conf文件</p><p>修改其中的（取消注释）</p><p><img src="image-20200623200343937.png" alt="alt"></p><h2 id="5、配置网页插件"><a href="#5、配置网页插件" class="headerlink" title="5、配置网页插件"></a>5、配置网页插件</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rabbitmq-plugins enable rabbitmq_management</span><br></pre></td></tr></table></figure><p>重新启动之后，查看运行状态</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl status rabbitmq-server</span><br></pre></td></tr></table></figure><p><img src="image-20200623195116379.png" alt="alt"></p><p>配置文件生效</p><p>访问管理界面</p><p><img src="image-20200623200320102.png" alt="alt"></p><h2 id="附：配置阿里云安全组"><a href="#附：配置阿里云安全组" class="headerlink" title="附：配置阿里云安全组"></a>附：配置阿里云安全组</h2><p>放行15672端口</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h1 id=&quot;Linux安装RabbitMQ&quot;&gt;&lt;a href=&quot;#Linux安装RabbitMQ&quot; class=&quot;headerlink&quot; title=&quot;Linux安装RabbitMQ&quot;&gt;&lt;/a&gt;Linux安装RabbitMQ&lt;/h1&gt;&lt;h2 id=&quot;1、erlang的安装&quot;&gt;
+      
+    
+    </summary>
+    
+    
+    
+      <category term="软件安装" scheme="http://yoursite.com/tags/%E8%BD%AF%E4%BB%B6%E5%AE%89%E8%A3%85/"/>
+    
+  </entry>
   
   <entry>
     <title>Redis学习系列（二）事务和配置文件</title>
