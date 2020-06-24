@@ -2,6 +2,20 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://yoursite.com/2020/06/24/RabbitMQ%EF%BC%88%E4%BA%8C%EF%BC%89SpringBoot%E6%95%B4%E5%90%88%E5%8F%8A%E9%9B%86%E7%BE%A4/</loc>
+    
+    <lastmod>2020-06-24T13:42:32.246Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yoursite.com/2020/06/24/RabbitMQ%EF%BC%88%E4%B8%80%EF%BC%89%E5%9F%BA%E7%A1%80%E6%A8%A1%E5%9E%8B/</loc>
+    
+    <lastmod>2020-06-24T13:38:33.064Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://yoursite.com/2020/06/23/Linux-%E5%AE%89%E8%A3%85RabbitMQ/</loc>
     
     <lastmod>2020-06-23T12:08:55.603Z</lastmod>
